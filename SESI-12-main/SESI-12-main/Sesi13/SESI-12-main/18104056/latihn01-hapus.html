@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Edit Data</title>
+</head>
+<body>
+    
+    <form>
+    <div>
+        NAMA
+        <input type="text" id="txNAMA" disabled>
+    </div>
+    <div>
+        EMAIL
+        <input type="text" id="txEMAIL" disabled>
+    </div>
+    <div>
+        USERNAME
+        <input type="text" id="txUSERNAME" disabled>
+    </div>
+    <div id="tombol">
+        <button type="button" onclick="DeleteData()"> Hapus Data </button>
+    </div>
+    </form>
+
+    <script>
+        const qs = window.location.search;
+        const urlp = new URLSearchParams(qs);
+        let idp = urlp.get("id");
+        if(idp==null) location.href = "latihan01.html";
+        let cx = "https://webpro.ptov.my.id/api/curduser.php?aksi=get&q="+idp;
+        const bacadta = new XMLHttpRequest();
+        bacadta.open("GET" ,cx);
+        bacadta.send();
+        bacadta.onload = function(){
+            const dta = JSON.parse(this.responseText);
+
+            document.getElementById("txNAMA").value = dta.isi[0][0];
+            document.getElementById("txEMAIL").value = dta.isi[0][1];
+            document.getElementById("txUSERNAME").value= dta.isi[0][2];
+
+            console.log(dta);
+
+
+        }
+
+        function DeleteData(){
+            let params = "iduser="+idp
+    
+
+            bacadta.onload = function(){
+                const dta = JSON.parse(this.responseText);
+                if(dta.error==0){
+                    document.getElementById("tombol").style.display= "none";
+                    setTimeout("window.location.href='latihan01.html'", 2000);
+                }
+        }     
+        let cx = "https://webpro.ptov.my.id/api/curduser.php?aksi=destroy";
+        bacadta.open("POST",cx, true);
+        bacadta.setRequestHeader("content-type","application/x-www-form-urlencoded");
+        bacadta.send(params);
+    }
+    </script>
+
+
+</body>
+</html>
